@@ -1,4 +1,4 @@
-﻿# DemonsAndDogs — Generic Resource Framework
+﻿# GenEzResource — Generic Resource Framework
 
 A generic, convention-based resource framework built on ASP.NET Core 8, Entity Framework Core, and Blazor WebAssembly. Define a model, register it in one line, and get a full set of CRUD API endpoints **and** UI components automatically.
 
@@ -163,9 +163,9 @@ This auto-generates sidebar links for every registered resource.
 
 ---
 
-## What's Inside ResourceFramework.Server
+## What's Inside GenEzResource
 
-The server package is fully self-contained. Here's what it provides:
+The framework provides three main packages:
 
 ### Models (`ResourceFramework.Models` namespace)
 
@@ -174,7 +174,7 @@ The server package is fully self-contained. Here's what it provides:
 | `ResourceBase` | Base class with `Id`, `OwnerId`, `Key1`–`Key3`, `Version`, `CreatedAt`, `UpdatedAt`, `IsDeleted` |
 | `Resource<T>` | Wrapper that stores `T Data` as a JSONB column |
 
-### DataAccess (`ResourceFramework.Server.DataAccess` namespace)
+### Server (`ResourceFramework.Server` namespace)
 
 | Class / Interface | Description |
 |---|---|
@@ -182,27 +182,19 @@ The server package is fully self-contained. Here's what it provides:
 | `ResourceRepository<T>` | EF Core implementation of the repository |
 | `ResourceRegistry` | Fluent registry for adding resources (configures EF model + DI) |
 | `ResourceDbContext` | Base DbContext that auto-applies resource model configurations |
-
-### Services (`ResourceFramework.Server.Services` namespace)
-
-| Class / Interface | Description |
-|---|---|
 | `IResourceService<T>` | Service interface for business logic layer |
 | `ResourceService<T>` | Default implementation delegating to repository |
-
-### Infrastructure (`ResourceFramework.Server.Infrastructure` namespace)
-
-| Class | Description |
-|---|---|
 | `ResourceController<T>` | Generic API controller with 5 CRUD endpoints |
 | `GenericResourceControllerFeatureProvider` | Auto-registers controllers for each resource type |
 | `ResourceControllerModelConvention` | Names controllers after the resource type |
 
-### Extensions (`ResourceFramework.Server.Extensions` namespace)
+### UI Components (`ResourceFramework.UI` namespace)
 
-| Method | Description |
+| Component | Description |
 |---|---|
-| `AddResourceFramework(Action<ResourceRegistry>)` | One-line setup: registers services, repos, controllers |
+| `ResourceGrid<T>` | Radzen DataGrid with CRUD operations and MediatR integration |
+| `ResourceEditDialog<T>` | Dialog for creating and editing resources |
+| `ResourceNavLinks` | Automatically generated sidebar links for all registered resources |
 
 ---
 
@@ -279,19 +271,19 @@ dotnet nuget push UI.Component/bin/Release/ResourceFramework.UI.1.0.0.nupkg -k Y
 
 ```bash
 git clone <repo-url>
-cd DemonsAndDogs
+cd GenEzResource
 dotnet restore
 dotnet build
 ```
 
 To run the API:
 ```bash
-cd API
+cd ResourceFramework.Server
 dotnet run
 ```
 
 To run the Blazor WASM app:
 ```bash
-cd DemonsAndDogs
+cd GenEzResource
 dotnet run
 ```

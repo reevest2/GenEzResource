@@ -6,12 +6,23 @@
         <!-- NuGet Package Metadata -->
         <PackageId>ResourceFramework.Server</PackageId>
         <Version>1.0.0</Version>
-        <Authors>DemonsAndDogs</Authors>
-        <Description>All-in-one server package for the ResourceFramework. Provides ResourceBase models, generic EF Core repository, CRUD services, auto-generated API controllers, and one-line DI registration. Install this single package in your ASP.NET Core Web API project to get full resource CRUD infrastructure.</Description>
-        <PackageTags>resource;crud;api;efcore;aspnetcore;generic-controller;repository;nuget</PackageTags>
+        <Authors>GenEzResource</Authors>
+        <Description>All-in-one server package for the GenEzResource framework. Provides ResourceBase models, generic EF Core repository, CRUD services, auto-generated API controllers, and one-line DI registration. Install this single package in your ASP.NET Core Web API project to get full resource CRUD infrastructure.</Description>
+        <PackageTags>resource;crud;api;efcore;aspnetcore;generic-controller;repository;nuget;framework</PackageTags>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <IsPackable>true</IsPackable>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <RepositoryUrl>https://github.com/GenEzResource/GenEzResource</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageProjectUrl>https://github.com/GenEzResource/GenEzResource</PackageProjectUrl>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
     </PropertyGroup>
+    <ItemGroup>
+        <None Include="..\README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
     </ItemGroup>
