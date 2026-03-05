@@ -1,0 +1,95 @@
+@using ResourceFramework.Models
+@using Radzen
+@using Radzen.Blazor
+
+@typeparam TResource where TResource : ResourceBase, new()
+
+<div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@Title</h5>
+                <button type="button" class="btn-close" @onclick="OnCancel"></button>
+            </div>
+            <div class="modal-body">
+                @foreach (var prop in _editableProperties)
+                {
+                    <div class="mb-3">
+                        <RadzenLabel Text="@prop.Name" class="d-block mb-1" />
+                        @if (prop.PropertyType == typeof(bool))
+                        {
+                            <RadzenCheckBox TValue="bool"
+                                            Value="@((bool)(prop.GetValue(Resource) ?? false))"
+                                            Change="@(val => prop.SetValue(Resource, val))" />
+                        }
+                        else if (prop.PropertyType == typeof(int) || prop.PropertyType == typeof(int?))
+                        {
+                            <RadzenNumeric TValue="int"
+                                           Value="@((int)(prop.GetValue(Resource) ?? 0))"
+                                           Change="@(val => prop.SetValue(Resource, val))"
+                                           Style="width: 100%;" />
+                        }
+                        else if (prop.PropertyType == typeof(decimal) || prop.PropertyType == typeof(decimal?))
+                        {
+                            <RadzenNumeric TValue="decimal"
+                                           Value="@((decimal)(prop.GetValue(Resource) ?? 0m))"
+                                           Change="@(val => prop.SetValue(Resource, val))"
+                                           Style="width: 100%;" />
+                        }
+                        else if (prop.PropertyType == typeof(double) || prop.PropertyType == typeof(double?))
+                        {
+                            <RadzenNumeric TValue="double"
+                                           Value="@((double)(prop.GetValue(Resource) ?? 0.0))"
+                                           Change="@(val => prop.SetValue(Resource, val))"
+                                           Style="width: 100%;" />
+                        }
+                        else if (prop.PropertyType == typeof(DateTime) || prop.PropertyType == typeof(DateTime?))
+                        {
+                            <RadzenDatePicker TValue="DateTime?"
+                                              Value="@((DateTime?)prop.GetValue(Resource))"
+                                              Change="@(val => prop.SetValue(Resource, val))"
+                                              Style="width: 100%;" />
+                        }
+                        else
+                        {
+                            <RadzenTextBox Value="@(prop.GetValue(Resource)?.ToString() ?? "")"
+                                           Change="@(val => prop.SetValue(Resource, val))"
+                                           Style="width: 100%;" />
+                        }
+                    </div>
+                }
+            </div>
+            <div class="modal-footer">
+                <RadzenButton Text="Cancel" ButtonStyle="ButtonStyle.Light" Click="OnCancel" />
+                <RadzenButton Text="Save" ButtonStyle="ButtonStyle.Primary" Click="@HandleSave" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public TResource Resource { get; set; } = new();
+    [Parameter] public bool IsNew { get; set; }
+    [Parameter] public string Title { get; set; } = "Edit Resource";
+    [Parameter] public EventCallback<TResource> OnSave { get; set; }
+    [Parameter] public EventCallback OnCancel { get; set; }
+
+    private List<System.Reflection.PropertyInfo> _editableProperties = new();
+
+    private static readonly HashSet<string> ExcludedProperties = new()
+    {
+        "Id", "CreatedAt", "UpdatedAt", "Version", "IsDeleted"
+    };
+
+    protected override void OnInitialized()
+    {
+        _editableProperties = typeof(TResource).GetProperties()
+            .Where(p => !ExcludedProperties.Contains(p.Name) && p.CanWrite)
+            .ToList();
+    }
+
+    private async Task HandleSave()
+    {
+        await OnSave.InvokeAsync(Resource);
+    }
+}

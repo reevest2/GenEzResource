@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <!-- NuGet Package Metadata -->
+        <PackageId>ResourceFramework.Models</PackageId>
+        <Version>1.0.0</Version>
+        <Authors>DemonsAndDogs</Authors>
+        <Description>Shared models for the ResourceFramework. Contains ResourceBase and Resource&lt;T&gt; base classes used by both server and client packages.</Description>
+        <PackageTags>resource;models;base</PackageTags>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <IsPackable>true</IsPackable>
+    </PropertyGroup>
+</Project>
