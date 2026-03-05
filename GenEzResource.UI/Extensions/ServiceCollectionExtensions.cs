@@ -1,4 +1,5 @@
-﻿using GenEzResource.UI.MediatR;
+﻿using System;
+using GenEzResource.UI.MediatR;
 using GenEzResource.UI.Services;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;

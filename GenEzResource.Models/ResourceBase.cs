@@ -1,4 +1,6 @@
-﻿namespace GenEzResource.Models;
+﻿using System;
+
+namespace GenEzResource.Models;
 
 /// <summary>
 /// Represents the base class for resources in the application.

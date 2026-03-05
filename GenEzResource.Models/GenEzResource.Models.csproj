@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
+        <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <!-- NuGet Package Metadata -->
         <PackageId>GenEzResource.Models</PackageId>
-        <Version>1.0.0</Version>
+        <Version>1.0.1</Version>
         <Authors>GenEzResource</Authors>
         <Description>Shared models for the GenEzResource framework. Contains ResourceBase and Resource&lt;T&gt; base classes used by both server and client packages.</Description>
         <PackageTags>resource;models;base;crud;framework</PackageTags>
