@@ -1,7 +1,6 @@
 ﻿using System;
 using GenEzResource.UI.MediatR;
 using GenEzResource.UI.Services;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Radzen;
 
@@ -21,14 +20,6 @@ public static class ServiceCollectionExtensions
         {
             cfg.RegisterServicesFromAssembly(typeof(GetAllResourcesHandler<>).Assembly);
         });
-
-        // Register open generic handlers for MediatR
-        services.AddTransient(typeof(IRequestHandler<,>), typeof(GetAllResourcesHandler<>));
-        services.AddTransient(typeof(IRequestHandler<,>), typeof(GetResourceByIdHandler<>));
-        services.AddTransient(typeof(IRequestHandler<,>), typeof(GetResourcesByFilterHandler<>));
-        services.AddTransient(typeof(IRequestHandler<,>), typeof(UpsertResourceHandler<>));
-        services.AddTransient(typeof(IRequestHandler<,>), typeof(SoftDeleteResourceHandler<>));
-
         return services;
     }
 }
