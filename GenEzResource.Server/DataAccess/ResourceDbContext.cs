@@ -3,7 +3,7 @@
 namespace GenEzResource.Server.DataAccess;
 
 /// <summary>
-/// Base DbContext for the ResourceFramework. Automatically applies resource model
+/// Base DbContext for the GenEzResource. Automatically applies resource model
 /// configurations from the <see cref="ResourceRegistry"/>.
 /// Consumers can use this directly or extend it to add Identity, additional entities, etc.
 /// </summary>

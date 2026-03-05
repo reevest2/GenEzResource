@@ -1,0 +1,41 @@
+﻿@using GenEzResource.UI.Services
+@using GenEzResource.UI.Components
+@inject ResourceUIRegistry Registry
+
+@if (_resourceType != null)
+{
+    <RadzenNotification />
+    @_gridFragment
+}
+else
+{
+    <RadzenAlert AlertStyle="AlertStyle.Danger">
+        Resource "@ResourceName" not found in registry.
+    </RadzenAlert>
+}
+
+@code {
+    [Parameter] public string ResourceName { get; set; } = string.Empty;
+    
+    private Type? _resourceType;
+    private RenderFragment? _gridFragment;
+
+    protected override void OnParametersSet()
+    {
+        _resourceType = Registry.GetResourceType(ResourceName);
+        if (_resourceType != null)
+        {
+            var gridType = typeof(ResourceGrid<>).MakeGenericType(_resourceType);
+            _gridFragment = builder =>
+            {
+                builder.OpenComponent(0, gridType);
+                builder.AddAttribute(1, "Title", ResourceName);
+                builder.CloseComponent();
+            };
+        }
+        else
+        {
+            _gridFragment = null;
+        }
+    }
+}

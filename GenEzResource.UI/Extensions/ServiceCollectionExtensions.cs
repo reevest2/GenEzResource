@@ -8,7 +8,7 @@ namespace GenEzResource.UI.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddResourceUI(this IServiceCollection services, Action<ResourceUIRegistry> configure)
+    public static IServiceCollection AddGenEzResourceUI(this IServiceCollection services, Action<ResourceUIRegistry> configure)
     {
         var registry = new ResourceUIRegistry();
         configure(registry);

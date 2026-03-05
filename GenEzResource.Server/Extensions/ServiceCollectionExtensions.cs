@@ -8,18 +8,18 @@ namespace GenEzResource.Server.Extensions;
 public static class ServiceCollectionExtensions
 {
     /// <summary>
-    /// Registers all ResourceFramework server-side services: resource registry, repositories,
+    /// Registers all GenEzResource server-side services: resource registry, repositories,
     /// generic resource services, and auto-generated API controllers for each registered resource type.
     ///
     /// Usage:
     /// <code>
-    /// builder.Services.AddResourceFramework(registry =>
+    /// builder.Services.AddGenEzResource(registry =>
     /// {
     ///     registry.AddResource&lt;MyResource&gt;("MyResourcesTable");
     /// });
     /// </code>
     /// </summary>
-    public static IMvcBuilder AddResourceFramework(this IServiceCollection services, Action<ResourceRegistry> configure)
+    public static IMvcBuilder AddGenEzResource(this IServiceCollection services, Action<ResourceRegistry> configure)
     {
         // Register the open-generic service so IResourceService<T> resolves for any T
         services.AddScoped(typeof(IResourceService<>), typeof(ResourceService<>));
@@ -45,9 +45,9 @@ public static class ServiceCollectionExtensions
     }
 
     /// <summary>
-    /// Overload that also allows configuring MVC options beyond the resource framework defaults.
+    /// Overload that also allows configuring MVC options beyond the GenEzResource defaults.
     /// </summary>
-    public static IMvcBuilder AddResourceFramework(
+    public static IMvcBuilder AddGenEzResource(
         this IServiceCollection services,
         Action<ResourceRegistry> configureResources,
         Action<Microsoft.AspNetCore.Mvc.MvcOptions> configureMvc)

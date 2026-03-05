@@ -4,7 +4,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <!-- NuGet Package Metadata -->
-        <PackageId>ResourceFramework.Server</PackageId>
+        <PackageId>GenEzResource.Server</PackageId>
         <Version>1.0.0</Version>
         <Authors>GenEzResource</Authors>
         <Description>All-in-one server package for the GenEzResource framework. Provides ResourceBase models, generic EF Core repository, CRUD services, auto-generated API controllers, and one-line DI registration. Install this single package in your ASP.NET Core Web API project to get full resource CRUD infrastructure.</Description>

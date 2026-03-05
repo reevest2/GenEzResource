@@ -10,19 +10,19 @@ The framework is distributed as two NuGet packages:
 
 | Package | Description | Install In |
 |---|---|---|
-| **ResourceFramework.Server** | All-in-one server package — includes `ResourceBase`, `Resource<T>`, EF Core repository, CRUD services, generic API controllers, `ResourceRegistry`, `ResourceDbContext`, and one-line DI setup | ASP.NET Core Web API projects |
-| **ResourceFramework.UI** | Blazor WASM components — Radzen DataGrid with CRUD, MediatR handlers, `ResourceUIRegistry` | Blazor WebAssembly projects |
+| **GenEzResource.Server** | All-in-one server package — includes `ResourceBase`, `Resource<T>`, EF Core repository, CRUD services, generic API controllers, `ResourceRegistry`, `ResourceDbContext`, and one-line DI setup | ASP.NET Core Web API projects |
+| **GenEzResource.UI** | Blazor WASM components — Radzen DataGrid with CRUD, MediatR handlers, `ResourceUIRegistry` | Blazor WebAssembly projects |
 
-Both packages share **ResourceFramework.Models** (included automatically) which contains the `ResourceBase` and `Resource<T>` base classes.
+Both packages share **GenEzResource.Models** (included automatically) which contains the `ResourceBase` and `Resource<T>` base classes.
 
 ### Package Dependency Graph
 
 ```
-ResourceFramework.Models          (standalone, no dependencies)
+GenEzResource.Models          (standalone, no dependencies)
        │
-       ├── ResourceFramework.Server  (+ EF Core, ASP.NET Core MVC)
+       ├── GenEzResource.Server  (+ EF Core, ASP.NET Core MVC)
        │
-       └── ResourceFramework.UI     (+ Radzen.Blazor, MediatR)
+       └── GenEzResource.UI     (+ Radzen.Blazor, MediatR)
 ```
 
 ---
@@ -32,19 +32,19 @@ ResourceFramework.Models          (standalone, no dependencies)
 ### 1. Install the package
 
 ```bash
-dotnet add package ResourceFramework.Server
+dotnet add package GenEzResource.Server
 ```
 
 Or reference the project directly:
 
 ```xml
-<ProjectReference Include="..\ResourceFramework.Server\ResourceFramework.Server.csproj" />
+<ProjectReference Include="..\GenEzResource.Server\GenEzResource.Server.csproj" />
 ```
 
 ### 2. Define a resource model
 
 ```csharp
-using ResourceFramework.Models;
+using GenEzResource.Models;
 
 namespace MyApp;
 
@@ -58,13 +58,13 @@ public class TodoItem : ResourceBase
 ### 3. Register it in `Program.cs` (one line!)
 
 ```csharp
-using ResourceFramework.Server.Extensions;
-using ResourceFramework.Server.DataAccess;
+using GenEzResource.Server.Extensions;
+using GenEzResource.Server.DataAccess;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // One call registers: repository, service, EF table mapping, and API controller
-builder.Services.AddResourceFramework(registry =>
+builder.Services.AddGenEzResource(registry =>
 {
     registry.AddResource<TodoItem>("TodoItems");
 });
@@ -100,16 +100,16 @@ app.Run();
 ### 1. Install the package
 
 ```bash
-dotnet add package ResourceFramework.UI
+dotnet add package GenEzResource.UI
 ```
 
 ### 2. Register resources in `Program.cs`
 
 ```csharp
-using UI.Component.Extensions;
+using GenEzResource.UI.Extensions;
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-builder.Services.AddResourceUI(registry =>
+builder.Services.AddGenEzResourceUI(registry =>
 {
     registry.AddResource<TodoItem>();
 });
@@ -119,47 +119,64 @@ builder.Services.AddResourceUI(registry =>
 
 ```razor
 @page "/resources/{ResourceName}"
-@using UI.Component.Components
-@using UI.Component.Services
-@inject ResourceUIRegistry Registry
+@using GenEzResource.UI.Components
 
-@if (_resourceType != null)
-{
-    <RadzenNotification />
-    @_gridFragment
-}
-
-@code {
-    [Parameter] public string ResourceName { get; set; } = string.Empty;
-    private Type? _resourceType;
-    private RenderFragment? _gridFragment;
-
-    protected override void OnParametersSet()
-    {
-        _resourceType = Registry.GetResourceType(ResourceName);
-        if (_resourceType != null)
-        {
-            var gridType = typeof(ResourceGrid<>).MakeGenericType(_resourceType);
-            _gridFragment = builder =>
-            {
-                builder.OpenComponent(0, gridType);
-                builder.AddAttribute(1, "Title", ResourceName);
-                builder.CloseComponent();
-            };
-        }
-    }
-}
+<GenEzResourceView ResourceName="@ResourceName" />
 ```
+
+This single component handles the dynamic rendering of the appropriate resource grid based on the name from the URL. It is the easiest way to add resource management to your app.
 
 ### 4. Add navigation links
 
 In your `NavMenu.razor`:
 
 ```razor
+@using GenEzResource.UI.Components
+
 <ResourceNavLinks />
 ```
 
-This auto-generates sidebar links for every registered resource.
+This auto-generates sidebar links for every registered resource using their `DisplayName` and `RouteName`.
+
+---
+
+## Detailed UI Usage
+
+### Using GenEzResourceView (Recommended)
+
+`GenEzResourceView` is a "smart" component that looks up the resource type in the `ResourceUIRegistry` by its route name and renders a `ResourceGrid<T>` for it.
+
+```razor
+<GenEzResourceView ResourceName="TodoItems" />
+```
+
+### Using ResourceGrid<T> Directly
+
+If you want more control, such as adding a resource grid to a custom page with other content, use `ResourceGrid<T>` directly:
+
+```razor
+@using GenEzResource.UI.Components
+@using MyApp.Models
+
+<ResourceGrid TResource="TodoItem" Title="My Custom Todo List" />
+```
+
+### Customizing Columns
+
+By default, `ResourceGrid<T>` auto-generates columns for all properties of your model (plus `Id`). You can override this by providing a `Columns` render fragment:
+
+```razor
+<ResourceGrid TResource="TodoItem">
+    <Columns>
+        <RadzenDataGridColumn TItem="TodoItem" Property="Title" Title="Task Name" />
+        <RadzenDataGridColumn TItem="TodoItem" Property="IsComplete" Title="Done">
+            <Template Context="todo">
+                <RadzenCheckBox @bind-Value="@todo.IsComplete" Disabled="true" />
+            </Template>
+        </RadzenDataGridColumn>
+    </Columns>
+</ResourceGrid>
+```
 
 ---
 
@@ -167,14 +184,14 @@ This auto-generates sidebar links for every registered resource.
 
 The framework provides three main packages:
 
-### Models (`ResourceFramework.Models` namespace)
+### Models (`GenEzResource.Models` namespace)
 
 | Class | Description |
 |---|---|
 | `ResourceBase` | Base class with `Id`, `OwnerId`, `Key1`–`Key3`, `Version`, `CreatedAt`, `UpdatedAt`, `IsDeleted` |
 | `Resource<T>` | Wrapper that stores `T Data` as a JSONB column |
 
-### Server (`ResourceFramework.Server` namespace)
+### Server (`GenEzResource.Server` namespace)
 
 | Class / Interface | Description |
 |---|---|
@@ -188,13 +205,14 @@ The framework provides three main packages:
 | `GenericResourceControllerFeatureProvider` | Auto-registers controllers for each resource type |
 | `ResourceControllerModelConvention` | Names controllers after the resource type |
 
-### UI Components (`ResourceFramework.UI` namespace)
+### UI Components (`GenEzResource.UI` namespace)
 
 | Component | Description |
 |---|---|
 | `ResourceGrid<T>` | Radzen DataGrid with CRUD operations and MediatR integration |
 | `ResourceEditDialog<T>` | Dialog for creating and editing resources |
 | `ResourceNavLinks` | Automatically generated sidebar links for all registered resources |
+| `GenEzResourceView` | A unified wrapper component that dynamically renders a `ResourceGrid<T>` by name |
 
 ---
 
@@ -203,9 +221,9 @@ The framework provides three main packages:
 To add custom business logic for a specific resource, extend `ResourceService<T>`:
 
 ```csharp
-using ResourceFramework.Server.Services;
-using ResourceFramework.Server.DataAccess;
-using ResourceFramework.Models;
+using GenEzResource.Server.Services;
+using GenEzResource.Server.DataAccess;
+using GenEzResource.Models;
 
 public interface IMyCustomService : IResourceService<MyResource> { }
 
@@ -255,14 +273,14 @@ Every resource inherits these properties:
 dotnet build
 
 # Pack with a specific version
-dotnet pack ResourceFramework.Models -c Release -p:Version=1.0.0
-dotnet pack ResourceFramework.Server -c Release -p:Version=1.0.0
-dotnet pack UI.Component -c Release -p:Version=1.0.0
+dotnet pack GenEzResource.Models -c Release -p:Version=1.0.0
+dotnet pack GenEzResource.Server -c Release -p:Version=1.0.0
+dotnet pack GenEzResource.UI -c Release -p:Version=1.0.0
 
 # Publish to NuGet.org
-dotnet nuget push ResourceFramework.Models/bin/Release/ResourceFramework.Models.1.0.0.nupkg -k YOUR_API_KEY -s https://api.nuget.org/v3/index.json
-dotnet nuget push ResourceFramework.Server/bin/Release/ResourceFramework.Server.1.0.0.nupkg -k YOUR_API_KEY -s https://api.nuget.org/v3/index.json
-dotnet nuget push UI.Component/bin/Release/ResourceFramework.UI.1.0.0.nupkg -k YOUR_API_KEY -s https://api.nuget.org/v3/index.json
+dotnet nuget push GenEzResource.Models/bin/Release/GenEzResource.Models.1.0.0.nupkg -k YOUR_API_KEY -s https://api.nuget.org/v3/index.json
+dotnet nuget push GenEzResource.Server/bin/Release/GenEzResource.Server.1.0.0.nupkg -k YOUR_API_KEY -s https://api.nuget.org/v3/index.json
+dotnet nuget push GenEzResource.UI/bin/Release/GenEzResource.UI.1.0.0.nupkg -k YOUR_API_KEY -s https://api.nuget.org/v3/index.json
 ```
 
 ---
@@ -278,12 +296,12 @@ dotnet build
 
 To run the API:
 ```bash
-cd ResourceFramework.Server
+cd GenEzResource.Server
 dotnet run
 ```
 
 To run the Blazor WASM app:
 ```bash
-cd GenEzResource
+cd GenEzResource.UI
 dotnet run
 ```
