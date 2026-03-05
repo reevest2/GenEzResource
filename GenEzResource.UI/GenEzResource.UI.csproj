@@ -5,7 +5,7 @@
         <ImplicitUsings>disable</ImplicitUsings>
         <!-- NuGet Package Metadata -->
         <PackageId>GenEzResource.UI</PackageId>
-        <Version>1.0.1</Version>
+        <Version>1.0.2</Version>
         <Authors>GenEzResource</Authors>
         <Description>Blazor WebAssembly UI components for the GenEzResource framework. Provides auto-generated Radzen DataGrid pages with filtering, create, edit, and soft-delete for all registered resources via MediatR.</Description>
         <PackageTags>resource;crud;blazor;wasm;radzen;ui;components;framework</PackageTags>
